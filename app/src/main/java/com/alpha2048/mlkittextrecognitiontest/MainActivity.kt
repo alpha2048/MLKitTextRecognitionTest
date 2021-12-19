@@ -6,20 +6,24 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.modernstorage.filesystem.AndroidFileSystems
 
-@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
@@ -38,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val uiState by mainViewModel.state.collectAsState()
 
-            MaterialTheme {
+            MyThema {
                 Scaffold(
                     topBar = {
                         CenterAlignedTopAppBar(
@@ -51,7 +55,8 @@ class MainActivity : AppCompatActivity() {
                                         Text(text = "ここを押して調べる")
                                     }
                                 }
-                            }
+                            },
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors()
                         )
 
                     },
@@ -64,11 +69,15 @@ class MainActivity : AppCompatActivity() {
                                 LazyColumn {
                                     uiState.blocks.forEach { block ->
                                         item {
-                                            Box(modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(8.dp)
+                                            Card(modifier = Modifier
+                                                .padding(12.dp)
+                                                .wrapContentSize()
+                                            ) {
+                                                Box(modifier = Modifier
+                                                    .padding(8.dp)
                                                 ) {
-                                                Text(text = block.text)
+                                                    Text(text = block.text)
+                                                }
                                             }
                                         }
                                     }
@@ -120,3 +129,32 @@ fun ErrorLayout (
         Text(text = text, modifier = Modifier.padding(8.dp))
     }
 }
+
+@Composable
+fun MyThema(
+    content: @Composable () -> Unit
+) {
+    val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val myColorScheme = when {
+        dynamicColor -> {
+            dynamicLightColorScheme(LocalContext.current)
+        }
+        else -> MyLightColorScheme
+    }
+
+    MaterialTheme(
+        colorScheme = myColorScheme
+    ) {
+        // TODO (M3): MaterialTheme doesn't provide LocalIndication, remove when it does
+        val rippleIndication = rememberRipple()
+        CompositionLocalProvider(
+            LocalIndication provides rippleIndication,
+            content = content
+        )
+    }
+}
+
+val MyLightColorScheme = lightColorScheme(
+    primary = Color.Magenta,
+    onPrimary = Color.White,
+)
