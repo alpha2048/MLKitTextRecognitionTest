@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
                                                 .wrapContentSize()
                                             ) {
                                                 Box(modifier = Modifier
+                                                    .fillMaxWidth()
                                                     .padding(8.dp)
                                                 ) {
                                                     Text(text = block.text)
