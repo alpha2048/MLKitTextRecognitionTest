@@ -60,7 +60,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling:${versions.compose}"
     implementation "androidx.compose.material3:material3:1.0.0-alpha02"
 
-    implementation 'com.google.mlkit:text-recognition-japanese:16.0.0-beta1'
+    implementation 'com.google.mlkit:text-recognition-japanese:16.0.0-beta2'
 
     implementation 'com.google.modernstorage:modernstorage-filesystem:1.0.0-alpha02'
 
